@@ -1,5 +1,10 @@
 <main class="main">
- <div>Price: {{ price.price }}</div>
+  <button (click)="postCustomerData()">
+    post customer data
+  </button>
+  <div *ngFor="let item of data | keyvalue">
+    {{item.key}}: {{item.value}}
+  </div>
 </main>
 
 

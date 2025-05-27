@@ -1,47 +1,40 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
-import {PriceModel} from './Model/price.model';
+import {RestService} from './Service/rest.service';
+import {CustomerModel} from './Model/customer.model';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   title = 'coffee-project';
-  price: PriceModel = new PriceModel(0);
+  restService = inject(RestService);
+  data: CustomerModel = {
+    customer: 0,
+    applicationNumber: '',
+    payload: ''
+  };
 
-  ngOnInit(): void {
-      this.coffeeFunction()
-  }
+  postCustomerData() {
+    const customer = {
+      customer: Math.floor(Math.random() * 5),
+      applicationNumber: '123',
+      payload: '{}'
+    }
+    this.data = customer;
 
-  coffeeFunction() {
-    const {Client, logger} = require("camunda-external-task-client-js");
-
-    const config = {
-      baseUrl: "http://localhost:8080/engine-rest",
-      use: logger,
-      asyncResponseTimeout: 10000,
-    };
-
-    const client = new Client(config);
-
-    client.subscribe("price-topic", async ({task, taskService}) => {
-      try {
-        const price = task.variables.get("someVariable");
-        console.log(`Received task with variable: ${price}`);
-
-        await taskService.complete(task, {
-          variables: {
-            price,
-          },
-        });
-
-        console.log("Task erfolgreich abgeschlossen!");
-      } catch (error) {
-        console.error("Fehler beim Verarbeiten des Tasks:", error);
+    this.restService.addCustomer(customer).subscribe({
+      next: (response) => {
+        console.log('Response ', response)
+        this.data = response;
+      },
+      error: (err) => {
+        console.log('Error ', err)
       }
     })
   }
