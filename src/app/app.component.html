@@ -5,6 +5,13 @@
   <div *ngFor="let item of data | keyvalue">
     {{item.key}}: {{item.value}}
   </div>
+
+  <button (click)="getCustomerData()">
+    get customer data
+  </button>
+  <div>
+    getData: {{ getData }}
+  </div>
 </main>
 
 

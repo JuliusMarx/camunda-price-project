@@ -19,6 +19,15 @@ export class AppComponent {
     applicationNumber: '',
     payload: ''
   };
+  getData: string = '';
+
+  getCustomerData() {
+    this.restService.getCustomer().subscribe({
+      next: value => {
+        value = this.getData;
+      }
+    })
+  }
 
   postCustomerData() {
     const customer = {
